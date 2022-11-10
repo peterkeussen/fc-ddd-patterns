@@ -223,15 +223,15 @@ describe("Order repository test", () => {
   });
 
 
-  it("should find all orders",async () => {
+  it("should find all orders", async () => {
     const customerRepository = new CustomerRepository();
-    const customer = new Customer("123", "Customer 1");
+    const customer = new Customer("1", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.changeAddress(address);
     await customerRepository.create(customer);
 
     const productRepository = new ProductRepository();
-    const product = new Product("123", "Product 1", 10);
+    const product = new Product("12", "Product 1", 10);
     await productRepository.create(product);
 
     const ordemItem = new OrderItem(
@@ -241,15 +241,52 @@ describe("Order repository test", () => {
       product.id,
       2
     );
-
-    const order = new Order("1234", "123", [ordemItem]);
-
+    
+    // order 1
+    const order = new Order("1", "1", [ordemItem]);
+    
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
 
-    const orders = await orderRepository.findAll()
+    const foundOrders = await orderRepository.findAll();
 
-    expect(orders).toBe(1)
+    expect(foundOrders).toBeDefined();
+
+    const customerRepository2 = new CustomerRepository();
+    const customer2 = new Customer("2", "Customer 2");
+    const address2 = new Address("Street 1", 10, "Zipcode 1", "City 1");
+    customer2.changeAddress(address2);
+    await customerRepository2.create(customer2);
+
+    const productRepository2 = new ProductRepository();
+    const product2 = new Product("13", "Product 2", 15);
+    await productRepository2.create(product2);
+
+    const ordemItem2 = new OrderItem(
+      "2",
+      product2.name,
+      product2.price,
+      product2.id,
+      2
+    );
+
+    // order 2
+    const order2 = new Order("2", "2", [ordemItem2]);
+
+    const orderRepository2 = new OrderRepository();
+    await orderRepository2.create(order2);
+
+    const foundOrders2 = await orderRepository.findAll();
+
+    const orders = [order, order2];
+
+    expect(orders).toEqual(foundOrders2);
+    
+    expect(foundOrders2).toContainEqual(order)
+    expect(foundOrders2).toContainEqual(order2)
+    expect(foundOrders2[0].total()).toBe(20)
+    expect(foundOrders2[1].total()).toBe(30)
+
   });
-  
+
 });
