@@ -281,7 +281,8 @@ describe("Order repository test", () => {
     const orders = [order, order2];
 
     expect(orders).toEqual(foundOrders2);
-    
+
+    expect(foundOrders2).toHaveLength(2)
     expect(foundOrders2).toContainEqual(order)
     expect(foundOrders2).toContainEqual(order2)
     expect(foundOrders2[0].total()).toBe(20)
